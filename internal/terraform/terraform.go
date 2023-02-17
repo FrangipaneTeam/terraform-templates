@@ -1,37 +1,13 @@
-package main
+package terraform
 
 import (
 	"bufio"
-	"io"
-	"os"
 	"regexp"
 	"strings"
 )
 
-func checkFileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
-}
-
-func getFile(filename string) (string, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-
-	b, err := io.ReadAll(f)
-	if err != nil {
-		return "", err
-	}
-
-	return string(b), nil
-}
-
-func getTFTypes(filename string) string {
+// GetTFTypes returns the terraform type (datasource or resource) from the filename.
+func GetTFTypes(filename string) string {
 	reTFTypes := regexp.MustCompile(`^\S+_(datasource|resource).go$`)
 	tfTypes := ""
 
@@ -41,7 +17,8 @@ func getTFTypes(filename string) string {
 	return tfTypes
 }
 
-func getPackageName(str string) string {
+// GetPackageName returns the golang package name from the file content.
+func GetPackageName(str string) string {
 	rePackage := regexp.MustCompile(`^package\s+([a-zA-Z0-9_]+)$`)
 
 	packageName := ""
@@ -56,7 +33,8 @@ func getPackageName(str string) string {
 	return packageName
 }
 
-func getTFName(str string) string {
+// GetTFName returns the terraform name from the file content looking for comment //tfname: my_tfname.
+func GetTFName(str string) string {
 	reTFName := regexp.MustCompile(`^\/\/(?:\s+)?tfname:(?:\s+)?(\S+)$`)
 
 	tfName := ""

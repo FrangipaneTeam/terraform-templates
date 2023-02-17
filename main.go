@@ -7,6 +7,9 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+
+	"github.com/FrangipaneTeam/terraform-templates/internal/terraform"
+	"github.com/FrangipaneTeam/terraform-templates/pkg/file"
 )
 
 func main() {
@@ -18,30 +21,30 @@ func main() {
 		log.Fatal().Msg("filename is required")
 	}
 
-	if !checkFileExists(*fileName) {
+	if !file.IsFileExists(*fileName) {
 		log.Fatal().Msgf("file %s not found", *fileName)
 	}
 
 	log.Info().Msgf("using file %s", *fileName)
 
-	f, err := getFile(*fileName)
+	f, err := file.FileToString(*fileName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("error reading file")
 	}
 
-	tfTypes := getTFTypes(*fileName)
+	tfTypes := terraform.GetTFTypes(*fileName)
 	if tfTypes == "" {
 		log.Fatal().Msgf("tf types not found. The filename must be like `my_tf_name_datasource.go` or `my_tf_name_resource.go`")
 	}
 	log.Info().Msgf("tf type : %s", tfTypes)
 
-	packageName := getPackageName(f)
+	packageName := terraform.GetPackageName(f)
 	if packageName == "" {
 		log.Fatal().Msg("package name not found")
 	}
 	log.Info().Msgf("package name : %s", packageName)
 
-	tfName := getTFName(f)
+	tfName := terraform.GetTFName(f)
 	if tfName == "" {
 		log.Fatal().Msg("tfname not found. Please add a comment like `// tfname: my_tf_name")
 	}
