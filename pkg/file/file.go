@@ -14,8 +14,8 @@ func IsFileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-// FileToString reads a file and returns its content as a string.
-func FileToString(filename string) (string, error) {
+// ToString reads a file and returns its content as a string.
+func ToString(filename string) (string, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return "", err

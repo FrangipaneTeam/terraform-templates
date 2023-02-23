@@ -5,6 +5,8 @@ import (
 	_ "embed"
 	"html/template"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/iancoleman/strcase"
 )
@@ -15,6 +17,7 @@ type templateDef struct {
 	LowerCamelName string
 	CamelName      string
 	Filename       string
+	TestDir        string
 }
 
 //go:embed templates/datasource.go.tmpl
@@ -23,21 +26,30 @@ var templateDatasource string
 //go:embed templates/resource.go.tmpl
 var templateResource string
 
-func genTemplateConf(tfName, packageName, fileName string) templateDef {
+//go:embed templates/acc_test_resource.go.tmpl
+var templateAccTestResource string
+
+//go:embed templates/acc_test_datasource.go.tmpl
+var templateAccTestDataSource string
+
+func genTemplateConf(tfName, packageName, testDir, fileName string) templateDef {
 	t := templateDef{
 		Name:           tfName,
 		PackageName:    packageName,
 		LowerCamelName: strcase.ToLowerCamel(tfName),
 		CamelName:      strcase.ToCamel(tfName),
 		Filename:       fileName,
+		TestDir:        testDir,
 	}
 	return t
 }
 
 func (t templateDef) createTFFile(tfTypes string) error {
 	templateS := templateDatasource
+	templateAccTest := templateAccTestDataSource
 	if tfTypes == "resource" {
 		templateS = templateResource
+		templateAccTest = templateAccTestResource
 	}
 
 	tmpl, err := template.New("template").Parse(templateS)
@@ -58,5 +70,28 @@ func (t templateDef) createTFFile(tfTypes string) error {
 		return errWrite
 	}
 
+	// for acc test
+	tmplAccTest, errAccTest := template.New("template").Parse(templateAccTest)
+	if errAccTest != nil {
+		return errAccTest
+	}
+
+	var tplAccTest bytes.Buffer
+
+	errAccTestExec := tmplAccTest.Execute(&tplAccTest, t)
+	if errAccTestExec != nil {
+		return errAccTestExec
+	}
+
+	errWriteAccTest := os.WriteFile(t.TestDir+"/"+fileNameWithoutExtAndPath(t.Filename)+"_test.go", tplAccTest.Bytes(), 0o644)
+	if errWriteAccTest != nil {
+		return errWriteAccTest
+	}
+
 	return nil
+}
+
+func fileNameWithoutExtAndPath(fileName string) string {
+	f := filepath.Base(fileName)
+	return strings.TrimSuffix(f, filepath.Ext(f))
 }

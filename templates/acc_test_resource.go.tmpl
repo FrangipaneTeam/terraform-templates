@@ -1,0 +1,47 @@
+package tests
+
+import (
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+)
+
+//go:generate go run github.com/FrangipaneTeam/tf-doc-extractor@latest -filename $GOFILE -example-dir ../../examples -test
+const testAcc{{ .CamelName }}ResourceConfig = `
+resource "cloudavenue_{{ .Name }}" "example" {
+}
+`
+
+const resourceName = "cloudavenue_{{ .Name }}.example"
+
+func TestAcc{{ .CamelName }}Resource(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			// Read testing
+			{
+				// Apply test
+				Config: testAcc{{ .CamelName }}ResourceConfig,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttrSet(resourceName, "id"),
+				),
+			},
+			// Uncomment if you want to test update or delete this block
+			// {
+			// 	// Update test
+			// 	Config: strings.Replace(testAcc{{ .CamelName }}ResourceConfig, "old", "new", 1),
+			// 	Check: resource.ComposeAggregateTestCheckFunc(
+			// 		resource.TestCheckResourceAttrSet(resourceName, "id"),
+			// 	),
+			// },
+			// ImportruetState testing
+			{
+				// Import test
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+			},
+		},
+	})
+}
