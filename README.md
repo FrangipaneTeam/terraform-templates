@@ -19,12 +19,12 @@ To generate a template for a Terraform data source, create a file with the desir
 package myPkgName
 ```
 
-Here, `myPkgName` is the name of the Go package that will contain the data source implementation, and `my_tfname` is the name of the data source as it appears in the Terraform configuration.
+Here, `myPkgName` is the name of the Go package that will contain the data source implementation, and `my_tfname` is the name of the data source as it appears in the Terraform configuration. `testdir` is the directory that contains your acceptance tests.
 
 You can now generate the file like this :
 
 ```bash
-terraform-templates -filename my_name_datasource.go
+terraform-templates -filename my_name_datasource.go -testdir ../my_test_dir
 ```
 
 ## Generating a resource template
@@ -35,12 +35,12 @@ To generate a template for a Terraform resource, create a file with the desired 
 package myPkgName
 ```
 
-Here, `myPkgName` is the name of the Go package that will contain the resource implementation, and `my_tfname` is the type of resource as it appears in the Terraform configuration.
+Here, `myPkgName` is the name of the Go package that will contain the resource implementation, and `my_tfname` is the type of resource as it appears in the Terraform configuration. `testdir` is the directory that contains your acceptance tests.
 
 You can now generate the file like this :
 
 ```bash
-terraform-templates -filename my_name_resource.go
+terraform-templates -filename my_name_resource.go -testdir ../my_test_dir
 ```
 
 # Contributing

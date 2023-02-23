@@ -14,6 +14,7 @@ import (
 
 func main() {
 	fileName := flag.String("filename", "", "filename")
+	testDir := flag.String("testdir", "", "test directory")
 	flag.Parse()
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
@@ -21,13 +22,23 @@ func main() {
 		log.Fatal().Msg("filename is required")
 	}
 
+	if *testDir == "" {
+		log.Fatal().Msg("testdir is required")
+	}
+
 	if !file.IsFileExists(*fileName) {
 		log.Fatal().Msgf("file %s not found", *fileName)
 	}
 
+	// test if filedir exists and is a directory
+	dir, err := os.Stat(*testDir)
+	if err != nil || !dir.IsDir() {
+		log.Fatal().Err(err).Msgf("testdir %s not found or not a directory", *testDir)
+	}
+
 	log.Info().Msgf("using file %s", *fileName)
 
-	f, err := file.FileToString(*fileName)
+	f, err := file.ToString(*fileName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("error reading file")
 	}
@@ -50,7 +61,7 @@ func main() {
 	}
 	log.Info().Msgf("tf name : %s", tfName)
 
-	t := genTemplateConf(tfName, packageName, *fileName)
+	t := genTemplateConf(tfName, packageName, *testDir, *fileName)
 	errT := t.createTFFile(tfTypes)
 	if errT != nil {
 		log.Fatal().Err(errT).Msg("error creating file")
