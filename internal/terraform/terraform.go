@@ -34,17 +34,16 @@ func GetPackageName(str string) string {
 }
 
 // GetTFName returns the terraform name from the file content looking for comment //tfname: my_tfname.
-func GetTFName(str string) string {
-	reTFName := regexp.MustCompile(`^\/\/(?:\s+)?tfname:(?:\s+)?(\S+)$`)
-
-	tfName := ""
+func GetTFName(str string) (categoryName, resourceName string) {
+	reTFName := regexp.MustCompile(`^\/\/(?:\s+)?tfname:\s+([a-z]+)_?(.*)`)
 
 	scanner := bufio.NewScanner(strings.NewReader(str))
 	for scanner.Scan() {
 		line := scanner.Text()
 		if reTFName.MatchString(line) {
-			tfName = reTFName.FindStringSubmatch(line)[1]
+			return reTFName.FindStringSubmatch(line)[1], reTFName.FindStringSubmatch(line)[2]
 		}
 	}
-	return tfName
+
+	return "", ""
 }

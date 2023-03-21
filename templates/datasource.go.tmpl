@@ -23,10 +23,36 @@ func New{{ .CamelName }}DataSource() datasource.DataSource {
 
 type {{ .LowerCamelName }}DataSource struct {
 	client *client.CloudAvenue
+
+	// Uncomment the following lines if you need to access the resource's.
+	// org    org.Org
+	// vdc    vdc.VDC
+	// vapp   vapp.VAPP
 }
 
 type {{ .LowerCamelName }}DataSourceModel struct {
 	ID types.String `tfsdk:"id"`
+}
+
+// Init Initializes the data source.
+func (d *{{ .LowerCamelName }}DataSource) Init(ctx context.Context, dm *{{ .LowerCamelName }}DataSourceModel) (diags diag.Diagnostics) {
+	
+	// Uncomment the following lines if you need to access to the Org
+	// r.org, diags = org.Init(r.client)
+	// if diags.HasError() {
+	// 	return
+	// }
+
+	// Uncomment the following lines if you need to access to the VDC
+	// r.vdc, diags = vdc.Init(r.client, rm.VDC)
+	// if diags.HasError() {
+	// 	return
+	// }
+
+	// Uncomment the following lines if you need to access to the VAPP
+	// r.vapp, diags = vapp.Init(r.client, r.vdc, rm.VAppID, rm.VAppName)
+
+	return
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -35,7 +61,7 @@ func (d *{{ .LowerCamelName }}DataSource) Metadata(ctx context.Context, req data
 
 func (d *{{ .LowerCamelName }}DataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "The {{ .Name }} datasource allows you to manage a ...",
+		Description: "The {{ .Name }} datasource allows you to read a ...",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -66,14 +92,23 @@ func (d *{{ .LowerCamelName }}DataSource) Configure(ctx context.Context, req dat
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data {{ .LowerCamelName }}DataSourceModel
+	config := &{{ .LowerCamelName }}DataSourceModel{}
 
 	// Read Terraform configuration data into the model
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
+	resp.Diagnostics.Append(req.Config.Get(ctx, config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// Init the resource
+	resp.Diagnostics.Append(r.Init(ctx, config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	/*
+		Implement the data source read logic here.
+	*/
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
