@@ -12,6 +12,8 @@ import (
 )
 
 type templateDef struct {
+	CategoryName   string
+	ResourceName   string
 	Name           string
 	PackageName    string
 	LowerCamelName string
@@ -32,15 +34,22 @@ var templateAccTestResource string
 //go:embed templates/acc_test_datasource.go.tmpl
 var templateAccTestDataSource string
 
-func genTemplateConf(tfName, packageName, testDir, fileName string) templateDef {
+func genTemplateConf(categoryName, resourceName, packageName, testDir, fileName string) templateDef {
 	t := templateDef{
-		Name:           tfName,
+		CategoryName:   categoryName,
+		ResourceName:   resourceName,
 		PackageName:    packageName,
-		LowerCamelName: strcase.ToLowerCamel(tfName),
-		CamelName:      strcase.ToCamel(tfName),
+		LowerCamelName: strcase.ToLowerCamel(resourceName),
+		CamelName:      strcase.ToCamel(resourceName),
 		Filename:       fileName,
 		TestDir:        testDir,
 	}
+
+	if resourceName == "" {
+		t.LowerCamelName = strcase.ToLowerCamel(categoryName)
+		t.CamelName = strcase.ToCamel(categoryName)
+	}
+
 	return t
 }
 
@@ -60,7 +69,6 @@ func (t templateDef) createTFFile(tfTypes string) error {
 	var tpl bytes.Buffer
 
 	errExec := tmpl.Execute(&tpl, t)
-
 	if errExec != nil {
 		return errExec
 	}

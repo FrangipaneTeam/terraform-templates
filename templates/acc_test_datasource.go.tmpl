@@ -10,13 +10,14 @@ import (
 
 //go:generate go run github.com/FrangipaneTeam/tf-doc-extractor@latest -filename $GOFILE -example-dir ../../../examples -test
 const testAcc{{ .CamelName }}DataSourceConfig = `
-data "cloudavenue_{{ .Name }}" "example" {
+data "cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName }}{{ end }}" "example" {
 }
 `
 
-const dataSourceName = "data.cloudavenue_{{ .Name }}.example"
 
 func TestAcc{{ .CamelName }}DataSource(t *testing.T) {
+	dataSourceName := "data.cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName }}{{ end }}.example"
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { tests.TestAccPreCheck(t) },
 		ProtoV6ProviderFactories: tests.TestAccProtoV6ProviderFactories,
