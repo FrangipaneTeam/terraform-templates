@@ -120,9 +120,6 @@ func (r *{{ .LowerCamelName }}Resource) Create(ctx context.Context, req resource
 
 	// Set state to fully populated data
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
 
 // Read refreshes the Terraform state with the latest data.
@@ -151,9 +148,6 @@ func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.R
 
 	// Set refreshed state
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
 
 // Update updates the resource and sets the updated Terraform state on success.
@@ -182,9 +176,6 @@ func (r *{{ .LowerCamelName }}Resource) Update(ctx context.Context, req resource
 
 	// Set state to fully populated data
 	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
 
 // Delete deletes the resource and removes the Terraform state on success.

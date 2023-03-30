@@ -112,7 +112,4 @@ func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasour
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
