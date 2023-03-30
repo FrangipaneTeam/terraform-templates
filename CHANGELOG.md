@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.4](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.3...v0.0.4) (2023-03-30)
+
+
+### Bug Fixes
+
+* **template:** remove unnecessary if-&gt;return on the end of functions ([13a70e5](https://github.com/FrangipaneTeam/terraform-templates/commit/13a70e508d90f2b9934d7abac8b84ac03d707311))
+
+
+### Miscellaneous
+
+* new format && remove testdir opt ([e078904](https://github.com/FrangipaneTeam/terraform-templates/commit/e0789042ff4f86286bf656f86eea8ea430abf17f))
+
 ## [0.0.3](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.2...v0.0.3) (2023-02-28)
 
 
