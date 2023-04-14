@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/iancoleman/strcase v0.2.0
-	github.com/rs/zerolog v1.29.0
+	github.com/rs/zerolog v1.29.1
 )
 
 require (
