@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "embed"
 	"flag"
 	"os"
 	"path/filepath"
@@ -11,6 +10,8 @@ import (
 
 	"github.com/FrangipaneTeam/terraform-templates/internal/terraform"
 	"github.com/FrangipaneTeam/terraform-templates/pkg/file"
+
+	_ "embed"
 )
 
 func main() {
@@ -26,7 +27,7 @@ func main() {
 		log.Fatal().Msgf("file %s not found", *fileName)
 	}
 
-	// // Get the absolute path of the file
+	// Get the absolute path of the file
 	absPath, err := filepath.Abs(*fileName)
 	if err != nil {
 		log.Fatal().Err(err).Msg("error getting absolute path")
@@ -35,6 +36,11 @@ func main() {
 	// Determine the test Path with the absolute path
 	d := filepath.Dir(absPath)
 	testDir := filepath.Join(absPath, "../../../tests/", filepath.Base(d))
+
+	// Determine the schema Path with the absolute path
+	schemaDir := filepath.Join(absPath, "../")
+
+	log.Info().Msgf("using schema dir %s", schemaDir)
 
 	// test if filedir exists and is a directory
 	dir, err := os.Stat(testDir)
@@ -67,7 +73,7 @@ func main() {
 	}
 	log.Info().Msgf("categoryName : %s -- resourceName : %s", categoryName, resourceName)
 
-	t := genTemplateConf(categoryName, resourceName, packageName, testDir, *fileName)
+	t := genTemplateConf(categoryName, resourceName, packageName, testDir, *fileName, schemaDir)
 	errT := t.createTFFile(tfTypes)
 	if errT != nil {
 		log.Fatal().Err(errT).Msg("error creating file")

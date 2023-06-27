@@ -60,15 +60,7 @@ func (d *{{ .LowerCamelName }}DataSource) Metadata(ctx context.Context, req data
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
-		Description: "The {{ .Name }} datasource allows you to read a ...",
-
-		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
-		},
-	}
+	resp.Schema = {{ .LowerCamelName }}Schema(ctx).GetDatasource(ctx)
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -78,17 +70,14 @@ func (d *{{ .LowerCamelName }}DataSource) Configure(ctx context.Context, req dat
 	}
 
 	client, ok := req.ProviderData.(*client.CloudAvenue)
-
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
 			fmt.Sprintf("Expected *client.CloudAvenue, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
-
 		return
 	}
-
-	d.client = client
+	r.client = client
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
