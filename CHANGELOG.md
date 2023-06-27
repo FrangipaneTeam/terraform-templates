@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.4...v0.0.5) (2023-06-27)
+
+
+### Miscellaneous
+
+* improve template ([#12](https://github.com/FrangipaneTeam/terraform-templates/issues/12)) ([6f4dc0d](https://github.com/FrangipaneTeam/terraform-templates/commit/6f4dc0dedc372345a7173b89e85c484feac97364))
+
 ## [0.0.4](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.3...v0.0.4) (2023-03-30)
 
 
