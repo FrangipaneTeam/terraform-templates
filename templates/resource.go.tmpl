@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/client"
@@ -67,14 +67,7 @@ func (r *{{ .LowerCamelName }}Resource) Metadata(_ context.Context, req resource
 
 // Schema defines the schema for the resource.
 func (r *{{ .LowerCamelName }}Resource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
-		MarkdownDescription: "The {{ .ResourceName }} resource allows you to manage a ...",
-		Attributes:          map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
-		},
-	}
+	resp.Schema = {{ .LowerCamelName }}Schema(ctx).GetResource(ctx)
 }
 
 func (r *{{ .LowerCamelName }}Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
@@ -91,7 +84,6 @@ func (r *{{ .LowerCamelName }}Resource) Configure(ctx context.Context, req resou
 		)
 		return
 	}
-
 	r.client = client
 }
 
@@ -143,7 +135,7 @@ func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.R
 	*/
 
 	plan := &{{ .LowerCamelName }}ResourceModel{
-		ID: types.StringValue(),
+		// ID: types.StringValue(),
 	}
 
 	// Set refreshed state
@@ -153,11 +145,11 @@ func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.R
 // Update updates the resource and sets the updated Terraform state on success.
 func (r *{{ .LowerCamelName }}Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var (
-		plan := &{{ .LowerCamelName }}ResourceModel{}
-		state := &{{ .LowerCamelName }}ResourceModel{}
+		plan = &{{ .LowerCamelName }}ResourceModel{}
+		state = &{{ .LowerCamelName }}ResourceModel{}
 	)
 
-	// Get current state
+	// Get current plan and state
 	resp.Diagnostics.Append(req.Plan.Get(ctx, plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, state)...)
 	if resp.Diagnostics.HasError() {

@@ -1,4 +1,4 @@
-package tests
+package {{ .PackageName }}
 
 import (
 	"testing"
@@ -27,7 +27,7 @@ func TestAcc{{ .CamelName }}DataSource(t *testing.T) {
 				// Apply test
 				Config: testAcc{{ .CamelName }}ResourceConfig,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttrSet(resourceName, "id"),
+					resource.TestCheckResourceAttrSet(dataSourceName, "id"),
 				),
 			},
 		},

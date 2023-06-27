@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
-	_ "embed"
 	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/iancoleman/strcase"
+
+	_ "embed"
 )
 
 type templateDef struct {
@@ -20,6 +21,7 @@ type templateDef struct {
 	CamelName      string
 	Filename       string
 	TestDir        string
+	SchemaDir      string
 }
 
 //go:embed templates/datasource.go.tmpl
@@ -34,7 +36,10 @@ var templateAccTestResource string
 //go:embed templates/acc_test_datasource.go.tmpl
 var templateAccTestDataSource string
 
-func genTemplateConf(categoryName, resourceName, packageName, testDir, fileName string) templateDef {
+//go:embed templates/schema.go.tmpl
+var templateSchema string
+
+func genTemplateConf(categoryName, resourceName, packageName, testDir, fileName, schemaDir string) templateDef {
 	t := templateDef{
 		CategoryName:   categoryName,
 		ResourceName:   resourceName,
@@ -43,6 +48,7 @@ func genTemplateConf(categoryName, resourceName, packageName, testDir, fileName 
 		CamelName:      strcase.ToCamel(resourceName),
 		Filename:       fileName,
 		TestDir:        testDir,
+		SchemaDir:      schemaDir,
 	}
 
 	if resourceName == "" {
@@ -73,7 +79,7 @@ func (t templateDef) createTFFile(tfTypes string) error {
 		return errExec
 	}
 
-	errWrite := os.WriteFile(t.Filename, tpl.Bytes(), 0o644)
+	errWrite := os.WriteFile(t.Filename, tpl.Bytes(), 0o600)
 	if errWrite != nil {
 		return errWrite
 	}
@@ -91,9 +97,29 @@ func (t templateDef) createTFFile(tfTypes string) error {
 		return errAccTestExec
 	}
 
-	errWriteAccTest := os.WriteFile(t.TestDir+"/"+fileNameWithoutExtAndPath(t.Filename)+"_test.go", tplAccTest.Bytes(), 0o644)
+	errWriteAccTest := os.WriteFile(t.TestDir+"/"+fileNameWithoutExtAndPath(t.Filename)+"_test.go", tplAccTest.Bytes(), 0o600)
 	if errWriteAccTest != nil {
 		return errWriteAccTest
+	}
+
+	var tplSchema bytes.Buffer
+
+	// if file not already exists create schema file
+	if _, err := os.Stat(t.SchemaDir + "/" + (t.Filename) + "_schema.go"); os.IsNotExist(err) {
+		tmplSchema, errSchemaTmpl := template.New("template").Parse(templateSchema)
+		if errSchemaTmpl != nil {
+			return errSchemaTmpl
+		}
+
+		errSchema := tmplSchema.Execute(&tplSchema, t)
+		if errSchema != nil {
+			return errSchema
+		}
+
+		errWriteSchema := os.WriteFile(t.SchemaDir+"/"+fileNameWithoutExtAndPath(t.Filename)+"_schema.go", tplSchema.Bytes(), 0o600)
+		if errWriteSchema != nil {
+			return errWriteSchema
+		}
 	}
 
 	return nil
