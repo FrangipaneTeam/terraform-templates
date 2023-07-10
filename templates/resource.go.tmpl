@@ -15,9 +15,12 @@ import (
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource                = &{{ .LowerCamelName }}Resource{}
-	_ resource.ResourceWithConfigure   = &{{ .LowerCamelName }}Resource{}
-	_ resource.ResourceWithImportState = &{{ .LowerCamelName }}Resource{}
+	_ resource.Resource                   = &{{ .LowerCamelName }}Resource{}
+	_ resource.ResourceWithConfigure      = &{{ .LowerCamelName }}Resource{}
+	_ resource.ResourceWithImportState    = &{{ .LowerCamelName }}Resource{}
+	// _ resource.ResourceWithModifyPlan     = &{{ .LowerCamelName }}Resource{}
+	// _ resource.ResourceWithUpgradeState   = &{{ .LowerCamelName }}Resource{}
+	// _ resource.ResourceWithValidateConfig = &{{ .LowerCamelName }}Resource{}
 )
 
 // New{{ .CamelName }}Resource is a helper function to simplify the provider implementation.
@@ -35,12 +38,13 @@ type {{ .LowerCamelName }}Resource struct {
 	// vapp   vapp.VAPP
 }
 
-type {{ .LowerCamelName }}ResourceModel struct {
-	ID types.String `tfsdk:"id"`
-}
+// If the resource don't have same schema/structure as the data source, you can use the following code:
+// type {{ .LowerCamelName }}ResourceModel struct {
+// 	ID types.String `tfsdk:"id"`
+// }
 
 // Init Initializes the resource.
-func (r *{{ .LowerCamelName }}Resource) Init(ctx context.Context, rm *{{ .LowerCamelName }}ResourceModel) (diags diag.Diagnostics) {
+func (r *{{ .LowerCamelName }}Resource) Init(ctx context.Context, rm *{{ .LowerCamelName }}Model) (diags diag.Diagnostics) {
 	
 	// Uncomment the following lines if you need to access to the Org
 	// r.org, diags = org.Init(r.client)
@@ -89,7 +93,7 @@ func (r *{{ .LowerCamelName }}Resource) Configure(ctx context.Context, req resou
 
 // Create creates the resource and sets the initial Terraform state.
 func (r *{{ .LowerCamelName }}Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	plan := &{{ .LowerCamelName }}ResourceModel{}
+	plan := &{{ .LowerCamelName }}Model{}
 
 	// Retrieve values from plan
 	resp.Diagnostics.Append(req.Plan.Get(ctx, plan)...)
@@ -116,7 +120,7 @@ func (r *{{ .LowerCamelName }}Resource) Create(ctx context.Context, req resource
 
 // Read refreshes the Terraform state with the latest data.
 func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	state := &{{ .LowerCamelName }}ResourceModel{}
+	state := &{{ .LowerCamelName }}Model{}
 
 	// Get current state
 	resp.Diagnostics.Append(req.State.Get(ctx, state)...)
@@ -134,7 +138,7 @@ func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.R
 		Implement the resource read here
 	*/
 
-	plan := &{{ .LowerCamelName }}ResourceModel{
+	plan := &{{ .LowerCamelName }}Model{
 		// ID: types.StringValue(),
 	}
 
@@ -145,8 +149,8 @@ func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.R
 // Update updates the resource and sets the updated Terraform state on success.
 func (r *{{ .LowerCamelName }}Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var (
-		plan = &{{ .LowerCamelName }}ResourceModel{}
-		state = &{{ .LowerCamelName }}ResourceModel{}
+		plan = &{{ .LowerCamelName }}Model{}
+		state = &{{ .LowerCamelName }}Model{}
 	)
 
 	// Get current plan and state
@@ -172,7 +176,7 @@ func (r *{{ .LowerCamelName }}Resource) Update(ctx context.Context, req resource
 
 // Delete deletes the resource and removes the Terraform state on success.
 func (r *{{ .LowerCamelName }}Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	state := &{{ .LowerCamelName }}ResourceModel{}
+	state := &{{ .LowerCamelName }}Model{}
 
 	// Get current state
 	resp.Diagnostics.Append(req.State.Get(ctx, state)...)

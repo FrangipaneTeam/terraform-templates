@@ -14,6 +14,16 @@ resource "cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .Resource
 }
 `
 
+const testAcc{{ .CamelName }}ResourceConfigUpdate = `
+resource "cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName }}{{ end }}" "example" {
+}
+`
+
+func {{ .LowerCamelName }}TestCheck(resourceName string) resource.TestCheckFunc {
+	return resource.ComposeAggregateTestCheckFunc(
+		resource.TestCheckResourceAttrSet(resourceName, "id"),
+	)
+}
 
 func TestAcc{{ .CamelName }}Resource(t *testing.T) {
 	resourceName := "cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName }}{{ end }}.example"
@@ -26,18 +36,16 @@ func TestAcc{{ .CamelName }}Resource(t *testing.T) {
 			{
 				// Apply test
 				Config: testAcc{{ .CamelName }}ResourceConfig,
+				Check: {{ .LowerCamelName }}TestCheck(resourceName),
+			},
+			// Update testing
+			{
+				// Update test
+				Config: testAcc{{ .CamelName }}ResourceConfigUpdate,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet(resourceName, "id"),
 				),
 			},
-			// Uncomment if you want to test update or delete this block
-			// {
-			// 	// Update test
-			// 	Config: strings.Replace(testAcc{{ .CamelName }}ResourceConfig, "old", "new", 1),
-			// 	Check: resource.ComposeAggregateTestCheckFunc(
-			// 		resource.TestCheckResourceAttrSet(resourceName, "id"),
-			// 	),
-			// },
 			// Import State testing
 			{
 				// Import test

@@ -45,7 +45,10 @@ func main() {
 	// test if filedir exists and is a directory
 	dir, err := os.Stat(testDir)
 	if err != nil || !dir.IsDir() {
-		log.Fatal().Err(err).Msgf("testdir %s not found or not a directory", testDir)
+		// create the directory
+		if err := os.MkdirAll(testDir, 0755); err != nil {
+			log.Fatal().Err(err).Msgf("error creating directory %s", testDir)
+		}
 	}
 
 	log.Info().Msgf("using file %s", *fileName)
