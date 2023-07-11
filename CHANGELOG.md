@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.5...v0.0.6) (2023-07-11)
+
+
+### Features
+
+* add new templates base/types && update resource/datasources/schema/accTests templates ([#14](https://github.com/FrangipaneTeam/terraform-templates/issues/14)) ([2e94aad](https://github.com/FrangipaneTeam/terraform-templates/commit/2e94aadcb67d2462938ae439752fb53c3a67908c))
+
 ## [0.0.5](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.4...v0.0.5) (2023-06-27)
 
 
