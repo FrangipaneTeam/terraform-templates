@@ -14,7 +14,6 @@ data "cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName
 }
 `
 
-
 func TestAcc{{ .CamelName }}DataSource(t *testing.T) {
 	dataSourceName := "data.cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName }}{{ end }}.example"
 
@@ -25,10 +24,8 @@ func TestAcc{{ .CamelName }}DataSource(t *testing.T) {
 			// Read testing
 			{
 				// Apply test
-				Config: testAcc{{ .CamelName }}ResourceConfig,
-				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttrSet(dataSourceName, "id"),
-				),
+				Config: tests.ConcatTests(testAcc{{ .CamelName }}ResourceConfig, testAcc{{ .CamelName }}DataSourceConfig),
+				Check: {{ .LowerCamelName }}TestCheck(dataSourceName),
 			},
 		},
 	})

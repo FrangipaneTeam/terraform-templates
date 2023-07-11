@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,37 +31,38 @@ type {{ .LowerCamelName }}DataSource struct {
 	// vapp   vapp.VAPP
 }
 
-type {{ .LowerCamelName }}DataSourceModel struct {
-	ID types.String `tfsdk:"id"`
-}
+// If the data source don't have same schema/structure as the resource, you can use the following code:
+// type {{ .LowerCamelName }}DataSourceModel struct {
+// 	ID types.String `tfsdk:"id"`
+// }
 
 // Init Initializes the data source.
-func (d *{{ .LowerCamelName }}DataSource) Init(ctx context.Context, dm *{{ .LowerCamelName }}DataSourceModel) (diags diag.Diagnostics) {
+func (d *{{ .LowerCamelName }}DataSource) Init(ctx context.Context, dm *{{ .LowerCamelName }}Model) (diags diag.Diagnostics) {
 	
 	// Uncomment the following lines if you need to access to the Org
-	// r.org, diags = org.Init(r.client)
+	// d.org, diags = org.Init(d.client)
 	// if diags.HasError() {
 	// 	return
 	// }
 
 	// Uncomment the following lines if you need to access to the VDC
-	// r.vdc, diags = vdc.Init(r.client, rm.VDC)
+	// d.vdc, diags = vdc.Init(d.client, dm.VDC)
 	// if diags.HasError() {
 	// 	return
 	// }
 
 	// Uncomment the following lines if you need to access to the VAPP
-	// r.vapp, diags = vapp.Init(r.client, r.vdc, rm.VAppID, rm.VAppName)
+	// d.vapp, diags = vapp.Init(d.client, d.vdc, dm.VAppID, dm.VAppName)
 
 	return
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_" + categoryName + "_{{ .Name }}"
+	resp.TypeName = req.ProviderTypeName + "_" + categoryName {{ if ne .ResourceName "" }} + "_{{ .ResourceName }}"{{ end }}
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = {{ .LowerCamelName }}Schema(ctx).GetDatasource(ctx)
+	resp.Schema = {{ .LowerCamelName }}Schema(ctx).GetDataSource(ctx)
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -77,11 +79,14 @@ func (d *{{ .LowerCamelName }}DataSource) Configure(ctx context.Context, req dat
 		)
 		return
 	}
-	r.client = client
+	d.client = client
 }
 
 func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	config := &{{ .LowerCamelName }}DataSourceModel{}
+	config := &{{ .LowerCamelName }}Model{}
+
+	// If the data source don't have same schema/structure as the resource, you can use the following code:
+	// config := &{{ .LowerCamelName }}DataSourceModel{}
 
 	// Read Terraform configuration data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, config)...)
@@ -90,13 +95,30 @@ func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasour
 	}
 
 	// Init the resource
-	resp.Diagnostics.Append(r.Init(ctx, config)...)
+	resp.Diagnostics.Append(d.Init(ctx, config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	/*
 		Implement the data source read logic here.
+	*/
+
+	// If read function is identical to the resource, you can use the following code:
+	/* 
+	s := &{{ .LowerCamelName }}Resource{
+		client: d.client,
+		// org:    d.org,
+		// vdc:    d.vdc,
+		// vapp:   d.vapp,
+	}
+
+	// Read data from the API
+	data, _, diags := s.read(ctx, config)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
 	*/
 
 	// Save data into Terraform state
