@@ -1,4 +1,3 @@
-// Package {{ .PackageName }} provides a Terraform resource.
 package {{ .PackageName }}
 
 import (
@@ -6,30 +5,28 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/client"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
 var (
-	_ resource.Resource                   = &{{ .LowerCamelName }}Resource{}
-	_ resource.ResourceWithConfigure      = &{{ .LowerCamelName }}Resource{}
-	_ resource.ResourceWithImportState    = &{{ .LowerCamelName }}Resource{}
-	// _ resource.ResourceWithModifyPlan     = &{{ .LowerCamelName }}Resource{}
-	// _ resource.ResourceWithUpgradeState   = &{{ .LowerCamelName }}Resource{}
-	// _ resource.ResourceWithValidateConfig = &{{ .LowerCamelName }}Resource{}
+	_ resource.Resource                   = &{{ .CamelName }}Resource{}
+	_ resource.ResourceWithConfigure      = &{{ .CamelName }}Resource{}
+	_ resource.ResourceWithImportState    = &{{ .CamelName }}Resource{}
+	// _ resource.ResourceWithModifyPlan     = &{{ .CamelName }}Resource{}
+	// _ resource.ResourceWithUpgradeState   = &{{ .CamelName }}Resource{}
+	// _ resource.ResourceWithValidateConfig = &{{ .CamelName }}Resource{}
 )
 
 // New{{ .CamelName }}Resource is a helper function to simplify the provider implementation.
 func New{{ .CamelName }}Resource() resource.Resource {
-	return &{{ .LowerCamelName }}Resource{}
+	return &{{ .CamelName }}Resource{}
 }
 
-// {{ .LowerCamelName }}Resource is the resource implementation.
-type {{ .LowerCamelName }}Resource struct {
+// {{ .CamelName }}Resource is the resource implementation.
+type {{ .CamelName }}Resource struct {
 	client *client.CloudAvenue
 	
 	// Uncomment the following lines if you need to access the resource's.
@@ -39,12 +36,12 @@ type {{ .LowerCamelName }}Resource struct {
 }
 
 // If the resource don't have same schema/structure as the data source, you can use the following code:
-// type {{ .LowerCamelName }}ResourceModel struct {
+// type {{ .CamelName }}ResourceModel struct {
 // 	ID types.String `tfsdk:"id"`
 // }
 
 // Init Initializes the resource.
-func (r *{{ .LowerCamelName }}Resource) Init(ctx context.Context, rm *{{ .LowerCamelName }}Model) (diags diag.Diagnostics) {
+func (r *{{ .CamelName }}Resource) Init(ctx context.Context, rm *{{ .CamelName }}Model) (diags diag.Diagnostics) {
 	
 	// Uncomment the following lines if you need to access to the Org
 	// r.org, diags = org.Init(r.client)
@@ -65,16 +62,16 @@ func (r *{{ .LowerCamelName }}Resource) Init(ctx context.Context, rm *{{ .LowerC
 }
 
 // Metadata returns the resource type name.
-func (r *{{ .LowerCamelName }}Resource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *{{ .CamelName }}Resource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_" + categoryName {{ if ne .ResourceName "" }} + "_{{ .ResourceName }}"{{ end }}
 }
 
 // Schema defines the schema for the resource.
-func (r *{{ .LowerCamelName }}Resource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *{{ .CamelName }}Resource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = {{ .LowerCamelName }}Schema(ctx).GetResource(ctx)
 }
 
-func (r *{{ .LowerCamelName }}Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *{{ .CamelName }}Resource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -92,8 +89,8 @@ func (r *{{ .LowerCamelName }}Resource) Configure(ctx context.Context, req resou
 }
 
 // Create creates the resource and sets the initial Terraform state.
-func (r *{{ .LowerCamelName }}Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	plan := &{{ .LowerCamelName }}Model{}
+func (r *{{ .CamelName }}Resource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	plan := &{{ .CamelName }}Model{}
 
 	// Retrieve values from plan
 	resp.Diagnostics.Append(req.Plan.Get(ctx, plan)...)
@@ -111,16 +108,20 @@ func (r *{{ .LowerCamelName }}Resource) Create(ctx context.Context, req resource
 		Implement the resource creation logic here.
 	*/
 
-	state := *plan
-	// state.ID = ...
+	// Use generic read function to refresh the state
+	state, _, d := r.read(ctx, plan)
+	if d.HasError() {
+		resp.Diagnostics.Append(d...)
+		return
+	}
 
 	// Set state to fully populated data
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 }
 
 // Read refreshes the Terraform state with the latest data.
-func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	state := &{{ .LowerCamelName }}Model{}
+func (r *{{ .CamelName }}Resource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	state := &{{ .CamelName }}Model{}
 
 	// Get current state
 	resp.Diagnostics.Append(req.State.Get(ctx, state)...)
@@ -134,23 +135,26 @@ func (r *{{ .LowerCamelName }}Resource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	/*
-		Implement the resource read here
-	*/
-
-	plan := &{{ .LowerCamelName }}Model{
-		// ID: types.StringValue(),
+ 	// Refresh the state
+	stateRefreshed, found, d := r.read(ctx, state)
+	if !found {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if d.HasError() {
+		resp.Diagnostics.Append(d...)
+		return
 	}
 
 	// Set refreshed state
-	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, stateRefreshed)...)
 }
 
 // Update updates the resource and sets the updated Terraform state on success.
-func (r *{{ .LowerCamelName }}Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+func (r *{{ .CamelName }}Resource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var (
-		plan = &{{ .LowerCamelName }}Model{}
-		state = &{{ .LowerCamelName }}Model{}
+		plan = &{{ .CamelName }}Model{}
+		state = &{{ .CamelName }}Model{}
 	)
 
 	// Get current plan and state
@@ -170,13 +174,20 @@ func (r *{{ .LowerCamelName }}Resource) Update(ctx context.Context, req resource
 		Implement the resource update here
 	*/
 
+	// Use generic read function to refresh the state
+	stateRefreshed, _, d := r.read(ctx, plan)
+	if d.HasError() {
+		resp.Diagnostics.Append(d...)
+		return
+	}
+
 	// Set state to fully populated data
-	resp.Diagnostics.Append(resp.State.Set(ctx, plan)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, stateRefreshed)...)
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
-func (r *{{ .LowerCamelName }}Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	state := &{{ .LowerCamelName }}Model{}
+func (r *{{ .CamelName }}Resource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	state := &{{ .CamelName }}Model{}
 
 	// Get current state
 	resp.Diagnostics.Append(req.State.Get(ctx, state)...)
@@ -195,7 +206,53 @@ func (r *{{ .LowerCamelName }}Resource) Delete(ctx context.Context, req resource
 	*/
 }
 
-//go:generate go run github.com/FrangipaneTeam/tf-doc-extractor@latest -filename $GOFILE -example-dir ../../../examples -resource
-func (r *{{ .LowerCamelName }}Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+func (r *{{ .CamelName }}Resource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// * Import basic
+	// resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+
+	// * Import with custom logic
+	// idParts := strings.Split(req.ID, ".")
+
+	// if len(idParts) != 2 {
+	// 	resp.Diagnostics.AddError(
+	// 		"Unexpected Import Identifier",
+	// 		fmt.Sprintf("Expected import identifier with format: xx.xx. Got: %q", req.ID),
+	// 	)
+	// 	return
+	// }
+
+	// resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("xx"), var1)...)
+	// resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("xx"), var2)...)
+}
+
+
+// * CustomFuncs
+
+// read is a generic read function that can be used by the resource Create, Read and Update functions.
+func (r *{{ .CamelName }}Resource) read(ctx context.Context, planOrState *{{ .CamelName }}Model) (stateRefreshed *{{ .CamelName }}Model, found bool, diags diag.Diagnostics) {
+	// TODO : Remove the comment line after you have run the types generator
+	// stateRefreshed is commented because the Copy function is not before run the types generator
+	// stateRefreshed = planOrState.Copy()
+
+	/* 
+		Implement the resource read here
+	*/
+
+	/* Example
+	
+	data, err := r.foo.GetData()
+	if err != nil {
+		if govcd.ContainsNotFound(err) {
+			return nil, false, nil
+		}
+		diags.AddError("Error retrieving foo", err.Error())
+		return nil, true, diags
+	}
+
+	if !stateRefreshed.ID.IsKnown() {
+		stateRefreshed.ID.Set(r.foo.GetID())
+	}
+	*/
+
+	return stateRefreshed, true, nil
 }

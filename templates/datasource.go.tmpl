@@ -7,22 +7,20 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/client"
 )
 
 var (
-	_ datasource.DataSource              = &{{ .LowerCamelName }}DataSource{}
-	_ datasource.DataSourceWithConfigure = &{{ .LowerCamelName }}DataSource{}
+	_ datasource.DataSource              = &{{ .CamelName }}DataSource{}
+	_ datasource.DataSourceWithConfigure = &{{ .CamelName }}DataSource{}
 )
 
 func New{{ .CamelName }}DataSource() datasource.DataSource {
-	return &{{ .LowerCamelName }}DataSource{}
+	return &{{ .CamelName }}DataSource{}
 }
 
-type {{ .LowerCamelName }}DataSource struct {
+type {{ .CamelName }}DataSource struct {
 	client *client.CloudAvenue
 
 	// Uncomment the following lines if you need to access the resource's.
@@ -32,12 +30,12 @@ type {{ .LowerCamelName }}DataSource struct {
 }
 
 // If the data source don't have same schema/structure as the resource, you can use the following code:
-// type {{ .LowerCamelName }}DataSourceModel struct {
+// type {{ .CamelName }}DataSourceModel struct {
 // 	ID types.String `tfsdk:"id"`
 // }
 
 // Init Initializes the data source.
-func (d *{{ .LowerCamelName }}DataSource) Init(ctx context.Context, dm *{{ .LowerCamelName }}Model) (diags diag.Diagnostics) {
+func (d *{{ .CamelName }}DataSource) Init(ctx context.Context, dm *{{ .CamelName }}Model) (diags diag.Diagnostics) {
 	
 	// Uncomment the following lines if you need to access to the Org
 	// d.org, diags = org.Init(d.client)
@@ -57,15 +55,15 @@ func (d *{{ .LowerCamelName }}DataSource) Init(ctx context.Context, dm *{{ .Lowe
 	return
 }
 
-func (d *{{ .LowerCamelName }}DataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+func (d *{{ .CamelName }}DataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_" + categoryName {{ if ne .ResourceName "" }} + "_{{ .ResourceName }}"{{ end }}
 }
 
-func (d *{{ .LowerCamelName }}DataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *{{ .CamelName }}DataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = {{ .LowerCamelName }}Schema(ctx).GetDataSource(ctx)
 }
 
-func (d *{{ .LowerCamelName }}DataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *{{ .CamelName }}DataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -82,11 +80,11 @@ func (d *{{ .LowerCamelName }}DataSource) Configure(ctx context.Context, req dat
 	d.client = client
 }
 
-func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	config := &{{ .LowerCamelName }}Model{}
+func (d *{{ .CamelName }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	config := &{{ .CamelName }}Model{}
 
 	// If the data source don't have same schema/structure as the resource, you can use the following code:
-	// config := &{{ .LowerCamelName }}DataSourceModel{}
+	// config := &{{ .CamelName }}DataSourceModel{}
 
 	// Read Terraform configuration data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, config)...)
@@ -106,7 +104,7 @@ func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasour
 
 	// If read function is identical to the resource, you can use the following code:
 	/* 
-	s := &{{ .LowerCamelName }}Resource{
+	s := &{{ .CamelName }}Resource{
 		client: d.client,
 		// org:    d.org,
 		// vdc:    d.vdc,
@@ -119,8 +117,8 @@ func (d *{{ .LowerCamelName }}DataSource) Read(ctx context.Context, req datasour
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	*/
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	*/
 }
