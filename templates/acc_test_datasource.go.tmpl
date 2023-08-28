@@ -1,32 +1,61 @@
-package {{ .PackageName }}
+package testsacc
 
 import (
+	"context"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 
-	tests "github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/tests/common"
+	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/helpers/testsacc"
 )
 
-//go:generate go run github.com/FrangipaneTeam/tf-doc-extractor@latest -filename $GOFILE -example-dir ../../../examples -test
-const testAcc{{ .CamelName }}DataSourceConfig = `
-data "cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName }}{{ end }}" "example" {
+var _ testsacc.TestACC = &{{ .FullCamelResourceName }}DataSource{}
+
+const (
+	{{ .FullCamelResourceName }}DataSourceName = ResourceName("data.cloudavenue_{{ .FullSnakeResourceName }}")
+)
+
+type {{ .FullCamelResourceName }}DataSource struct{}
+
+func New{{ .FullCamelResourceName }}DataSourceTest() testsacc.TestACC {
+	return &{{ .FullCamelResourceName }}DataSource{}
 }
-`
 
-func TestAcc{{ .CamelName }}DataSource(t *testing.T) {
-	dataSourceName := "data.cloudavenue_{{ .CategoryName }}{{if ne .ResourceName ""}}_{{ .ResourceName }}{{ end }}.example"
+// GetResourceName returns the name of the resource.
+func (r *{{ .FullCamelResourceName }}DataSource) GetResourceName() string {
+	return {{ .FullCamelResourceName }}DataSourceName.String()
+}
 
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { tests.TestAccPreCheck(t) },
-		ProtoV6ProviderFactories: tests.TestAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			// Read testing
-			{
-				// Apply test
-				Config: tests.ConcatTests(testAcc{{ .CamelName }}ResourceConfig, testAcc{{ .CamelName }}DataSourceConfig),
-				Check: {{ .LowerCamelName }}TestCheck(dataSourceName),
-			},
+func (r *{{ .FullCamelResourceName }}DataSource) DependenciesConfig() (configs testsacc.TFData) {
+	// Add dependencies config to the resource
+	configs.Append(GetResourceConfig()[{{ .FullCamelResourceName }}ResourceName]().GetDefaultConfig())
+	return
+}
+
+func (r *{{ .FullCamelResourceName }}DataSource) Tests(ctx context.Context) map[testsacc.TestName]func(ctx context.Context, resourceName string) testsacc.Test {
+	return map[testsacc.TestName]func(ctx context.Context, resourceName string) testsacc.Test{
+		// * Test One (example)
+		"example": func(_ context.Context, resourceName string) testsacc.Test {
+			return testsacc.Test{
+				// ! Create testing
+				Create: testsacc.TFConfig{
+					TFConfig: `
+					data "cloudavenue_{{ .FullSnakeResourceName }}" "example" {
+						foo_id = cloudavenue_foo_bar.example.id
+					}`,
+					// Here use resource config test to test the data source
+					// the field example is the name of the test
+					Checks: New{{ .FullCamelResourceName }}ResourceTest().Tests(ctx)["example"](ctx, resourceName).GenerateCheckWithCommonChecks(),
+				},
+			}
 		},
+	}
+}
+
+func TestAcc{{ .FullCamelResourceName }}DataSource(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: TestAccProtoV6ProviderFactories,
+		Steps:                    testsacc.GenerateTests(&{{ .FullCamelResourceName }}DataSource{}),
 	})
 }
