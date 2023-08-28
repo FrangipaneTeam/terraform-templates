@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.6...v0.0.7) (2023-08-28)
+
+
+### Bug Fixes
+
+* bugs and improve acctests template ([#19](https://github.com/FrangipaneTeam/terraform-templates/issues/19)) ([91d8730](https://github.com/FrangipaneTeam/terraform-templates/commit/91d87305eb3d3517975b6f4c4531749adfca890d))
+
 ## [0.0.6](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.5...v0.0.6) (2023-07-11)
 
 
