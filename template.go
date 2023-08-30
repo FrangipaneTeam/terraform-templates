@@ -7,8 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/FrangipaneTeam/terraform-templates/pkg/file"
 	"github.com/iancoleman/strcase"
+
+	"github.com/FrangipaneTeam/terraform-templates/pkg/file"
 
 	_ "embed"
 )
