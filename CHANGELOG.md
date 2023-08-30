@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.7...v0.0.8) (2023-08-30)
+
+
+### Miscellaneous
+
+* add githook ([#23](https://github.com/FrangipaneTeam/terraform-templates/issues/23)) ([055946b](https://github.com/FrangipaneTeam/terraform-templates/commit/055946bd9f7a94336fed0efe9cd6d5d915fbb91b))
+
 ## [0.0.7](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.6...v0.0.7) (2023-08-28)
 
 
