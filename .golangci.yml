@@ -8,7 +8,6 @@ linters:
   enable:
     - asciicheck # Simple linter to check that your code does not contain non-ASCII identifiers [fast: true, auto-fix: false]
     - bidichk # Checks for dangerous unicode character sequences [fast: true, auto-fix: false]
-    - deadcode # Finds unused code [fast: false, auto-fix: false]
     - decorder # check declaration order and count of types, constants, variables and functions [fast: true, auto-fix: false]
     - dogsled # Checks assignments with too many blank identifiers (e.g. x, _, _, _, := f()) [fast: true, auto-fix: false]
     - durationcheck # check for two durations multiplied together [fast: false, auto-fix: false]
@@ -52,7 +51,6 @@ linters:
     - tparallel # tparallel detects inappropriate usage of t.Parallel() method in your Go test codes [fast: false, auto-fix: false]
     - typecheck # Like the front-end of a Go compiler, parses and type-checks Go code [fast: false, auto-fix: false]
     - unconvert # Remove unnecessary type conversions [fast: false, auto-fix: false]
-    - varcheck # Finds unused global variables and constants [fast: false, auto-fix: false]
     - wastedassign # wastedassign finds wasted assignment statements. [fast: false, auto-fix: false]
     - whitespace # Tool for detection of leading and trailing whitespace [fast: true, auto-fix: true]
     - errorlint # errorlint is a linter for that can be used to find code that will cause problems with the error wrapping scheme introduced in Go 1.13. [fast: false, auto-fix: false]
@@ -60,11 +58,13 @@ linters:
     - godot # Check if comments end in a period [fast: true, auto-fix: true]
     - unused #(megacheck): Checks Go code for unused constants, variables, functions and types [fast: false, auto-fix: false]
     - unparam # reports unused function parameters
-    - dupl # Tool for code clone detection [fast: true, auto-fix: false]
     - staticcheck #(megacheck): Staticcheck is a go vet on steroids, applying a ton of static analysis checks [fast: false, auto-fix: false]
     - bodyclose # checks whether HTTP response body is closed successfully
 
   disable:
+    - dupl # Tool for code clone detection [fast: true, auto-fix: false]
+    - varcheck # Finds unused global variables and constants [fast: false, auto-fix: false]
+    - deadcode # Finds unused code [fast: false, auto-fix: false]
     - structcheck # Finds unused struct fields [fast: false, auto-fix: false]
     - nakedret # Finds naked returns in functions greater than a specified function length [fast: true, auto-fix: false]
     - depguard # Go linter that checks if package imports are in a list of acceptable packages [fast: true, auto-fix: false]
@@ -90,7 +90,7 @@ linters:
 
 linters-settings:
   goimports:
-    local-prefixes: github.com/orange-cloudavenue/terraform-provider-cloudavenue
+    local-prefixes: github.com/FrangipaneTeam/terraform-templates
 
   gci:
     # Section configuration to compare against.
@@ -101,14 +101,8 @@ linters-settings:
     sections:
       - standard # Standard section: captures all standard packages.
       - default # Default section: contains all imports that could not be matched to another section type.
-      - prefix(github.com/vmware)
-      - prefix(github.com/hashicorp/terraform-plugin-framework/)
-      - prefix(github.com/hashicorp/terraform-plugin-framework/resource,github.com/hashicorp/terraform-plugin-framework/datasource)
-      - prefix(github.com/hashicorp/terraform-plugin-framework/resource/schema/,github.com/hashicorp/terraform-plugin-framework/datasource/schema/)
-      - prefix(github.com/hashicorp/terraform-plugin-framework-validators/)
-      - prefix(github.com/hashicorp)
       - prefix(github.com/FrangipaneTeam)
-      - prefix(github.com/orange-cloudavenue/terraform-provider-cloudavenue,github.com/orange-cloudavenue/cloudavenue-sdk-go)
+      - prefix(github.com/FrangipaneTeam/terraform-templates)
       - blank # Blank section: contains all blank imports. This section is not present unless explicitly enabled.
       - dot # Dot section: contains all dot imports. This section is not present unless explicitly enabled.
     skip-generated: true
@@ -117,7 +111,7 @@ linters-settings:
   gofumpt:
     # Module path which contains the source code being formatted.
     # Default: ""
-    module-path: github.com/orange-cloudavenue/terraform-provider-cloudavenue
+    module-path: github.com/FrangipaneTeam/terraform-templates
     # Choose whether to use the extra rules.
     # Default: false
     extra-rules: true
@@ -181,9 +175,4 @@ linters-settings:
               "XSRF",
               "XSS",
               # Custom rules
-              "VDC",
-              "DFW",
-              "VLAN",
-              "IAM",
-              "VCDA",
             ] 
