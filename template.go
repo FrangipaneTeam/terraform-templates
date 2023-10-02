@@ -95,9 +95,9 @@ func (t templateDef) createTemplateFiles(tfTypes string) error {
 		return err
 	}
 
-	// * testDir/xx_test.go
+	// * testDir/categoryName_xx_test.go
 	// for acc test
-	if err := createTemplateIfNotExists(t, t.TestDir+"/"+fileNameWithoutExtAndPath(t.Filename)+"_test.go", templateCommonTemplates+templateAccTest); err != nil {
+	if err := createTemplateIfNotExists(t, t.TestDir+"/"+t.CategoryName+"_"+fileNameWithoutExtAndPath(t.Filename)+"_test.go", templateCommonTemplates+templateAccTest); err != nil {
 		return err
 	}
 

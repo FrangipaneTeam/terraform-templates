@@ -45,7 +45,7 @@ func (r *{{ .FullCamelResourceName }}DataSource) Tests(ctx context.Context) map[
 					}`,
 					// Here use resource config test to test the data source
 					// the field example is the name of the test
-					Checks: New{{ .FullCamelResourceName }}ResourceTest().Tests(ctx)["example"](ctx, resourceName).GenerateCheckWithCommonChecks(),
+					Checks: GetResourceConfig()[{{ .FullCamelResourceName }}ResourceName]().GetDefaultChecks()
 				},
 			}
 		},

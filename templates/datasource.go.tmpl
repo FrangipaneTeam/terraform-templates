@@ -81,6 +81,8 @@ func (d *{{ .CamelName }}DataSource) Configure(ctx context.Context, req datasour
 }
 
 func (d *{{ .CamelName }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	defer metrics.New("data.cloudavenue_{{ .FullSnakeResourceName }}", r.client.GetOrgName(), metrics.Read)()
+
 	config := &{{ .CamelName }}Model{}
 
 	// If the data source don't have same schema/structure as the resource, you can use the following code:
