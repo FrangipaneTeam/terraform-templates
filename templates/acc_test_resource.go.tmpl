@@ -13,7 +13,7 @@ import (
 var _ testsacc.TestACC = &{{ .FullCamelResourceName }}Resource{}
 
 const (
-	{{ .FullCamelResourceName }}ResourceName = ResourceName("cloudavenue_{{ .FullSnakeResourceName }}")
+	{{ .FullCamelResourceName }}ResourceName = testsacc.ResourceName("cloudavenue_{{ .FullSnakeResourceName }}")
 )
 
 type {{ .FullCamelResourceName }}Resource struct{}

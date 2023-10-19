@@ -7,6 +7,8 @@ import (
 	// The fwresource import alias is so there is no collistion
 	// with the more typical acceptance testing import:
 	// "github.com/hashicorp/terraform-plugin-testing/helper/resource".
+	// The fwdatasource import alias is so there is no collistion
+	// fwdatasource "github.com/hashicorp/terraform-plugin-framework/datasource".
 	fwresource "github.com/hashicorp/terraform-plugin-framework/resource"
 
 	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/provider/{{ .PackageName }}"
@@ -43,10 +45,10 @@ func Test{{ .CamelName }}DataSourceSchema(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	schemaResponse := &fwresource.SchemaResponse{}
+	schemaResponse := &fwdatasource.SchemaResponse{}
 
 	// Instantiate the datasource.Datasource and call its Schema method
-	{{ .PackageName }}.New{{ .CamelName }}DataSource().Schema(ctx, fwresource.SchemaRequest{}, schemaResponse)
+	{{ .PackageName }}.New{{ .CamelName }}DataSource().Schema(ctx, fwdatasource.SchemaRequest{}, schemaResponse)
 
 	if schemaResponse.Diagnostics.HasError() {
 		t.Fatalf("Schema method diagnostics: %+v", schemaResponse.Diagnostics)

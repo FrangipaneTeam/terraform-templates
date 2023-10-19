@@ -5,9 +5,14 @@ import (
 	"context"
 	"fmt"
 
+	{{ if eq .CategoryName "s3" }}
+	"github.com/aws/aws-sdk-go/service/s3"
+	{{ end }}
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 
+	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/metrics"
 	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/client"
 )
 
@@ -22,11 +27,14 @@ func New{{ .CamelName }}DataSource() datasource.DataSource {
 
 type {{ .CamelName }}DataSource struct {
 	client *client.CloudAvenue
-
+	{{ if eq .CategoryName "s3" }}
+	s3Client *s3.S3
+	{{ else }}
 	// Uncomment the following lines if you need to access the resource's.
 	// org    org.Org
 	// vdc    vdc.VDC
 	// vapp   vapp.VAPP
+	{{ end }}
 }
 
 // If the data source don't have same schema/structure as the resource, you can use the following code:
@@ -36,7 +44,9 @@ type {{ .CamelName }}DataSource struct {
 
 // Init Initializes the data source.
 func (d *{{ .CamelName }}DataSource) Init(ctx context.Context, dm *{{ .CamelName }}Model) (diags diag.Diagnostics) {
-	
+	{{ if eq .CategoryName "s3" }}
+	d.s3Client = d.client.CAVSDK.V1.S3()
+	{{ else }}
 	// Uncomment the following lines if you need to access to the Org
 	// d.org, diags = org.Init(d.client)
 	// if diags.HasError() {
@@ -51,7 +61,7 @@ func (d *{{ .CamelName }}DataSource) Init(ctx context.Context, dm *{{ .CamelName
 
 	// Uncomment the following lines if you need to access to the VAPP
 	// d.vapp, diags = vapp.Init(d.client, d.vdc, dm.VAppID, dm.VAppName)
-
+	{{ end }}
 	return
 }
 
@@ -81,7 +91,7 @@ func (d *{{ .CamelName }}DataSource) Configure(ctx context.Context, req datasour
 }
 
 func (d *{{ .CamelName }}DataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	defer metrics.New("data.cloudavenue_{{ .FullSnakeResourceName }}", r.client.GetOrgName(), metrics.Read)()
+	defer metrics.New("data.cloudavenue_{{ .FullSnakeResourceName }}", d.client.GetOrgName(), metrics.Read)()
 
 	config := &{{ .CamelName }}Model{}
 

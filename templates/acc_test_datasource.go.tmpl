@@ -12,7 +12,7 @@ import (
 var _ testsacc.TestACC = &{{ .FullCamelResourceName }}DataSource{}
 
 const (
-	{{ .FullCamelResourceName }}DataSourceName = ResourceName("data.cloudavenue_{{ .FullSnakeResourceName }}")
+	{{ .FullCamelResourceName }}DataSourceName = testsacc.ResourceName("data.cloudavenue_{{ .FullSnakeResourceName }}")
 )
 
 type {{ .FullCamelResourceName }}DataSource struct{}
@@ -35,7 +35,7 @@ func (r *{{ .FullCamelResourceName }}DataSource) DependenciesConfig() (configs t
 func (r *{{ .FullCamelResourceName }}DataSource) Tests(ctx context.Context) map[testsacc.TestName]func(ctx context.Context, resourceName string) testsacc.Test {
 	return map[testsacc.TestName]func(ctx context.Context, resourceName string) testsacc.Test{
 		// * Test One (example)
-		"example": func(_ context.Context, resourceName string) testsacc.Test {
+		"example": func(_ context.Context, _ string) testsacc.Test {
 			return testsacc.Test{
 				// ! Create testing
 				Create: testsacc.TFConfig{

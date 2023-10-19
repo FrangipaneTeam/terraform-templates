@@ -4,9 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	{{ if eq .CategoryName "s3" }}
+	"github.com/aws/aws-sdk-go/service/s3"
+	{{ end }}
+
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 
+	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/metrics"
 	"github.com/orange-cloudavenue/terraform-provider-cloudavenue/internal/client"
 )
 
@@ -28,11 +33,14 @@ func New{{ .CamelName }}Resource() resource.Resource {
 // {{ .CamelName }}Resource is the resource implementation.
 type {{ .CamelName }}Resource struct {
 	client *client.CloudAvenue
-	
+	{{ if eq .CategoryName "s3" }}
+	s3Client *s3.S3
+	{{ else }}
 	// Uncomment the following lines if you need to access the resource's.
 	// org    org.Org
 	// vdc    vdc.VDC
 	// vapp   vapp.VAPP
+	{{ end }}
 }
 
 // If the resource don't have same schema/structure as the data source, you can use the following code:
@@ -42,7 +50,9 @@ type {{ .CamelName }}Resource struct {
 
 // Init Initializes the resource.
 func (r *{{ .CamelName }}Resource) Init(ctx context.Context, rm *{{ .CamelName }}Model) (diags diag.Diagnostics) {
-	
+	{{ if eq .CategoryName "s3" }}
+	r.s3Client = r.client.CAVSDK.V1.S3()
+	{{ else }}
 	// Uncomment the following lines if you need to access to the Org
 	// r.org, diags = org.Init(r.client)
 	// if diags.HasError() {
@@ -57,7 +67,7 @@ func (r *{{ .CamelName }}Resource) Init(ctx context.Context, rm *{{ .CamelName }
 
 	// Uncomment the following lines if you need to access to the VAPP
 	// r.vapp, diags = vapp.Init(r.client, r.vdc, rm.VAppID, rm.VAppName)
-
+	{{ end }}
 	return
 }
 

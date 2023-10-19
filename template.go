@@ -67,8 +67,8 @@ func genTemplateConf(categoryName, resourceName, packageName, testDir, fileName,
 		Filename:              fileName,
 		TestDir:               testDir,
 		SchemaDir:             schemaDir,
-		FullSnakeResourceName: strcase.ToSnake(categoryName + "_" + resourceName),
-		FullCamelResourceName: strcase.ToCamel(categoryName + "_" + resourceName),
+		FullSnakeResourceName: categoryName + "_" + strcase.ToSnake(resourceName),
+		FullCamelResourceName: categoryName + "_" + strcase.ToCamel(resourceName),
 	}
 
 	if resourceName == "" {
