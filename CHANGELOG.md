@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.9](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.8...v0.0.9) (2023-10-19)
+
+
+### Bug Fixes
+
+* [#27](https://github.com/FrangipaneTeam/terraform-templates/issues/27) [#26](https://github.com/FrangipaneTeam/terraform-templates/issues/26) [#29](https://github.com/FrangipaneTeam/terraform-templates/issues/29) ([#30](https://github.com/FrangipaneTeam/terraform-templates/issues/30)) ([ca513b4](https://github.com/FrangipaneTeam/terraform-templates/commit/ca513b4d77c38a385287962fe268b1c93b5ee2eb))
+* s3 categoryName ([#32](https://github.com/FrangipaneTeam/terraform-templates/issues/32)) ([95ca903](https://github.com/FrangipaneTeam/terraform-templates/commit/95ca9037268f42ec0ff4b79f28afc00b175f07ff))
+
 ## [0.0.8](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.7...v0.0.8) (2023-08-30)
 
 
