@@ -27,12 +27,12 @@ func (r *{{ .FullCamelResourceName }}Resource) GetResourceName() string {
 	return {{ .FullCamelResourceName }}ResourceName.String()
 }
 
-func (r *{{ .FullCamelResourceName }}Resource) DependenciesConfig() (configs testsacc.TFData) {
+func (r *{{ .FullCamelResourceName }}Resource) DependenciesConfig() (resp testsacc.DependenciesConfigResponse) {
 	// TODO : Add dependencies config
-	// configs.Append(GetResourceConfig()[CatalogResourceName]().GetDefaultConfig())
+	// resp.Append(GetResourceConfig()[CatalogResourceName]().GetDefaultConfig)
 
 	// This is method for add dependencies legacy config
-	// configs.Append(AddConstantConfig(constantName))
+	// resp.Append(AddConstantConfig(constantName))
 	return
 }
 
@@ -47,31 +47,32 @@ func (r *{{ .FullCamelResourceName }}Resource) Tests(ctx context.Context) map[te
 				},
 				// ! Create testing
 				Create: testsacc.TFConfig{
-					TFConfig: `
+					TFConfig: testsacc.GenerateFromTemplate(resourceName, `
 					resource "cloudavenue_{{ .FullSnakeResourceName }}" "example" {
 						foo = "bar"
-					}`,
+					}`),
 					Checks: []resource.TestCheckFunc{
 						resource.TestCheckResourceAttr(resourceName, "foo", "bar"),
+
 					},
 				},
 				// ! Updates testing
 				Updates: []testsacc.TFConfig{
 					{
-						TFConfig: `
+						TFConfig: testsacc.GenerateFromTemplate(resourceName, `
 						resource "cloudavenue_{{ .FullSnakeResourceName }}" "example" {
 							foo = "barUpdated"
-						}`,
+						}`),
 						Checks: []resource.TestCheckFunc{
 							resource.TestCheckResourceAttr(resourceName, "foo", "barUpdated"),
 						},
 					},
 					{
-						TFConfig: `
+						TFConfig: testsacc.GenerateFromTemplate(resourceName, `
 						resource "cloudavenue_{{ .FullSnakeResourceName }}" "example" {
 							foo = "barUpdated"
 							bar = "foo"
-						}`,
+						}`),
 						Checks: []resource.TestCheckFunc{
 							resource.TestCheckResourceAttr(resourceName, "foo", "barUpdated"),
 							resource.TestCheckResourceAttr(resourceName, "bar", "foo"),

@@ -26,9 +26,9 @@ func (r *{{ .FullCamelResourceName }}DataSource) GetResourceName() string {
 	return {{ .FullCamelResourceName }}DataSourceName.String()
 }
 
-func (r *{{ .FullCamelResourceName }}DataSource) DependenciesConfig() (configs testsacc.TFData) {
+func (r *{{ .FullCamelResourceName }}DataSource) DependenciesConfig() (resp testsacc.DependenciesConfigResponse) {
 	// Add dependencies config to the resource
-	configs.Append(GetResourceConfig()[{{ .FullCamelResourceName }}ResourceName]().GetDefaultConfig())
+	resp.Append(GetResourceConfig()[{{ .FullCamelResourceName }}ResourceName]().GetDefaultConfig),
 	return
 }
 
