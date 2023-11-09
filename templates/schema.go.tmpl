@@ -44,6 +44,18 @@ func {{ .LowerCamelName }}Schema(_ context.Context) superschema.Schema {
 					Computed:             true,
 				},
 			},
+			"single": superschema.SuperSingleNestedAttributeOf[struct{}]{ 
+				Common: &schemaR.SingleNestedAttribute{
+					MarkdownDescription: "The name of the index document.",
+				},
+				Resource: &schemaR.SingleNestedAttribute{
+					Optional: true,
+				},
+				DataSource: &schemaD.SingleNestedAttribute{
+					Computed: true,
+				},
+				Attributes: superschema.Attributes{},
+			},
         },
     }
 }
