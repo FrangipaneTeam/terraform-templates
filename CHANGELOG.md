@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.10](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.9...v0.0.10) (2023-11-09)
+
+
+### Bug Fixes
+
+* minors bugs ([#33](https://github.com/FrangipaneTeam/terraform-templates/issues/33)) ([78a638c](https://github.com/FrangipaneTeam/terraform-templates/commit/78a638cb3e4a9fd1c1fd924e499d4777bfe450cb))
+
 ## [0.0.9](https://github.com/FrangipaneTeam/terraform-templates/compare/v0.0.8...v0.0.9) (2023-10-19)
 
 
